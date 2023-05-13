@@ -6,8 +6,8 @@ from .model import Measurement
 from .schema import MeasurementBase
 
 
-def get_measurement_by_sensor_id(sensor_id: int, db: Session, skip: int = 0, limit: int = 100,):
-    return db.query(Measurement).filter(Measurement.sensor_id == sensor_id).offset(skip).limit(limit).all()
+def get_last_measurement_by_sensor_id(sensor_id: str, db: Session):
+    return db.query(Measurement).filter(Measurement.sensor_id == sensor_id).order_by(Measurement.timestamp.desc()).first()
 
 def register_measurement(measurement: MeasurementBase, db: Session):
     try:
