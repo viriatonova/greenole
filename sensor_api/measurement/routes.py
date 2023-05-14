@@ -27,7 +27,7 @@ async def create_mensurement(
     if not last_sensor_measurement:
         return register_measurement(measurement, db)
 
-    # Checking if the last measurement is older than 1 minute
+    # Checking if the last measurement is older than 5 seconds
     if (
         measurement.sensor_id == last_sensor_measurement.sensor_id
         and now - last_sensor_measurement.created_at < datetime.timedelta(seconds=5)
