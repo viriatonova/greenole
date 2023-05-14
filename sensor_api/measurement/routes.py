@@ -26,10 +26,11 @@ async def create_mensurement(
     )
     if not last_sensor_measurement:
         return register_measurement(measurement, db)
+
     # Checking if the last measurement is older than 1 minute
     if (
         measurement.sensor_id == last_sensor_measurement.sensor_id
-        and now - last_sensor_measurement.timestamp < datetime.timedelta(minutes=1)
+        and now - last_sensor_measurement.created_at < datetime.timedelta(seconds=5)
     ):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -43,8 +44,4 @@ async def create_mensurement(
 )
 async def get_all_measurements(sensor_id: str, db: Session = Depends(get_db)):
     db_measurements = get_all_measurement_by_sensor_id(sensor_id=sensor_id, db=db)
-    if not db_measurements:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Measurement not found"
-        )
     return db_measurements

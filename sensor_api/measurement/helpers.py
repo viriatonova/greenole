@@ -14,7 +14,7 @@ def get_last_measurement_by_sensor_id(sensor_id: str, db: Session):
     return (
         db.query(Measurement)
         .filter(Measurement.sensor_id == sensor_id)
-        .order_by(Measurement.timestamp.desc())
+        .order_by(Measurement.created_at.desc())
         .first()
     )
 

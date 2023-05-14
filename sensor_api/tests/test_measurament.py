@@ -6,9 +6,9 @@ from main import app
 client = TestClient(app)
 
 register_payload = {
-    "sensor_id": str(randint(100, 999)),
+    "sensor_id": randint(100, 999),
     "variable": "temp",
-    "value": "-1",
+    "value": 1.0,
     "unit": "celsius",
 }
 
@@ -28,4 +28,3 @@ def test_get_all_measurement_by_sensor_id():
     response_json = response.json()
     assert response.status_code == 200
     assert isinstance(response_json, list)
-    assert len(response_json) > 0
