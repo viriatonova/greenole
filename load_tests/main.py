@@ -1,9 +1,6 @@
-import os
 from random import randint
 
-from locust import HttpUser, between, task
-
-API_PORT = os.getenv("API_PORT")
+from locust import HttpUser, task
 
 
 class LoadTestAPI(HttpUser):
