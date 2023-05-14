@@ -12,5 +12,9 @@ class MeasurementBase(BaseModel):
 
     class Config:
         orm_mode = True
-        fields = { "variable": {"exclude": True}, "value": {"exclude": True}, "unit": {"exclude": True}}
-    
+        fields = {}
+
+class MeasurementRead(MeasurementBase):
+    class Config:
+        orm_mode = True
+        fields = {}

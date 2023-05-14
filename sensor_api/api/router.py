@@ -5,9 +5,10 @@ router = APIRouter(
     prefix="/api/v1",
 )
 
+
 @router.get("/")
 async def healthchecker() -> dict:
-    return {"message": "API is running "}
+    return {"message": "Api is running"}
 
 
 router.include_router(measurement_routes)

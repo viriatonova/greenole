@@ -1,0 +1,10 @@
+FROM python:3.11.3-buster
+
+ENV PYTHONUNBUFFERED=1
+ENV DEBIAN_FRONTEND="noninteractive"
+
+WORKDIR /load_tests
+
+COPY . .
+
+RUN pip install --no-cache-dir --upgrade -r requirements.txt

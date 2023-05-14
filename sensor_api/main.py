@@ -1,14 +1,14 @@
 import uvicorn
-from fastapi import FastAPI
-from api.settings import API_HOST, DEBUG, RELOAD, API_PORT
 from api.router import router
+from api.settings import API_HOST, API_PORT, DEBUG, RELOAD
+from fastapi import FastAPI
 
 app = FastAPI(
     debug=DEBUG,
-    title='API CTI',
-    version='0.0.1',
-    description='Api in development',
-    docs_url='/api/v1/docs'
+    title="API CTI",
+    version="0.0.1",
+    description="Api in development",
+    docs_url="/api/v1/docs",
 )
 
 app.include_router(router)

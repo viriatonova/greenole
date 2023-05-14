@@ -1,9 +1,9 @@
 from api.database import BASE
-from sqlalchemy import ( Column, DateTime, Integer, String,
-                        func)
+from sqlalchemy import Column, DateTime, Integer, String, func
+
 
 class Measurement(BASE):
-    __tablename__ = 'measurements'
+    __tablename__ = "measurements"
     __table_args__ = ({"schema": "sensor_measurement"},)
 
     id = Column(Integer, primary_key=True, index=True)

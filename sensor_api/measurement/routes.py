@@ -1,20 +1,50 @@
 import datetime
-from fastapi import APIRouter, Depends, status, HTTPException
-from sqlalchemy.orm import Session
-from api.database import get_db
-from measurement.schema import MeasurementBase
-from .helpers import register_measurement, get_last_measurement_by_sensor_id
 
+from api.database import get_db
+from fastapi import APIRouter, Depends, HTTPException, status
+from measurement.schema import MeasurementBase, MeasurementRead
+from sqlalchemy.orm import Session
+
+from .helpers import (
+    get_all_measurement_by_sensor_id,
+    get_last_measurement_by_sensor_id,
+    register_measurement,
+)
 
 measurement_routes = APIRouter()
 
-@measurement_routes.post("/measurement", status_code=status.HTTP_201_CREATED, response_model=MeasurementBase)
-async def create_mensurement(measurement: MeasurementBase, db: Session = Depends(get_db)):
-        now = datetime.datetime.now()
-        last_sensor_measurement = get_last_measurement_by_sensor_id(measurement.sensor_id, db)
-        if not last_sensor_measurement:
-              return register_measurement(measurement, db)
-        # Checking if the last measurement is older than 1 minute
-        if now - last_sensor_measurement.timestamp < datetime.timedelta(minutes=1):
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Last measurement not is older than 1 minute")  
+
+@measurement_routes.post(
+    "/measurement", status_code=status.HTTP_201_CREATED, response_model=MeasurementBase
+)
+async def create_mensurement(
+    measurement: MeasurementBase, db: Session = Depends(get_db)
+):
+    now = datetime.datetime.now()
+    last_sensor_measurement = get_last_measurement_by_sensor_id(
+        measurement.sensor_id, db
+    )
+    if not last_sensor_measurement:
         return register_measurement(measurement, db)
+    # Checking if the last measurement is older than 1 minute
+    if (
+        measurement.sensor_id == last_sensor_measurement.sensor_id
+        and now - last_sensor_measurement.timestamp < datetime.timedelta(minutes=1)
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Last measurement not is older than 1 minute",
+        )
+    return register_measurement(measurement, db)
+
+
+@measurement_routes.get(
+    "/measurement/{sensor_id}", response_model=list[MeasurementRead]
+)
+async def get_all_measurements(sensor_id: str, db: Session = Depends(get_db)):
+    db_measurements = get_all_measurement_by_sensor_id(sensor_id=sensor_id, db=db)
+    if not db_measurements:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Measurement not found"
+        )
+    return db_measurements

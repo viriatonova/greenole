@@ -1,9 +1,40 @@
 version: '3.6'
 
 services:
+    load_test:
+        build: ./load_tests
+        container_name: load_tests
+        ports:
+            - "8089:8089"
+        volumes:
+            - ./load_tests:/load_tests
+        command: ["locust", "-f", "main.py"]
+        depends_on:
+            - api
+    test:
+        build:
+            context: ./sensor_api
+            dockerfile: dockerfile.test
+        container_name: sensor_test_api
+        ports:
+            - "9001:${API_PORT}"
+        environment:
+            DEBUG: ${DEBUG}
+            RELOAD: ${RELOAD}
+            API_HOST: ${API_HOST}
+            API_PORT: ${API_PORT}
+            DB_HOST: db
+            DB_DATABASE: greenole_iot
+            DB_USER: ${DB_USER}
+            DB_PASSWORD: ${DB_PASSWORD}
+        volumes:
+            - "./sensor_api:/api_tests"
+        depends_on:
+            - db
     api:
         build:
             context: ./sensor_api
+            dockerfile: dockerfile.api
         container_name: sensor_api
         restart: always
         volumes:
@@ -21,6 +52,12 @@ services:
             DB_PASSWORD: ${DB_PASSWORD}
         depends_on:
             - db
+        healthcheck:
+            test: ["CMD-SHELL","curl", "-f","http://${API_HOST}:${API_PORT}/api/v1/"]
+            interval: 1m30s
+            timeout: 30s
+            retries: 5
+            start_period: 30s
     db:
         image: postgres:15.3
         restart: always
