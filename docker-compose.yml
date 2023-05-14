@@ -15,12 +15,12 @@ services:
             RELOAD: ${RELOAD}
             API_HOST: ${API_HOST}
             API_PORT: ${API_PORT}
-            DB_SERVER: ${DB_SERVER}
             DB_HOST: db
             DB_DATABASE: greenole_iot
             DB_USER: ${DB_USER}
             DB_PASSWORD: ${DB_PASSWORD}
-    
+        depends_on:
+            - db
     db:
         image: postgres:15.3
         restart: always
@@ -34,3 +34,8 @@ services:
         volumes:
             - ./db:/var/lib/postgresql/data
             - ./sql/meansurement_ddl.sql:/docker-entrypoint-initdb.d/meansurement_ddl.sql
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+            interval: 10s
+            timeout: 5s
+            retries: 3
