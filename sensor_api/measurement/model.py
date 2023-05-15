@@ -8,7 +8,7 @@ class Measurement(BASE):
 
     id = Column(Integer, primary_key=True, index=True)
     sensor_id = Column(Integer, index=True)
-    created_at = Column(DateTime(timezone=True), default=func.now())
+    created_at = Column(DateTime(timezone=True))
     variable = Column(String, nullable=False)
     value = Column(Float, nullable=False)
     unit = Column(String, nullable=False)

@@ -26,6 +26,7 @@ def register_measurement(measurement: MeasurementBase, db: Session):
             variable=measurement.variable,
             value=measurement.value,
             unit=measurement.unit,
+            created_at=measurement.created_at,
         )
         db.add(db_measurement)
         db.commit()

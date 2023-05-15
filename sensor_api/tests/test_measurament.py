@@ -1,15 +1,19 @@
 from random import randint
+from datetime import datetime
 
 from fastapi.testclient import TestClient
 from main import app
 
 client = TestClient(app)
 
+now = datetime.now()
+
 register_payload = {
     "sensor_id": randint(100, 999),
     "variable": "temp",
     "value": 1.0,
     "unit": "celsius",
+    "created_at": now.isoformat(),
 }
 
 

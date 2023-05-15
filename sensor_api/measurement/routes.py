@@ -20,7 +20,6 @@ measurement_routes = APIRouter()
 async def create_mensurement(
     measurement: MeasurementBase, db: Session = Depends(get_db)
 ):
-    now = datetime.datetime.now()
     last_sensor_measurement = get_last_measurement_by_sensor_id(
         measurement.sensor_id, db
     )
@@ -30,7 +29,7 @@ async def create_mensurement(
     # Checking if the last measurement is older than 5 seconds
     if (
         measurement.sensor_id == last_sensor_measurement.sensor_id
-        and now - last_sensor_measurement.created_at < datetime.timedelta(seconds=5)
+        and measurement.created_at - last_sensor_measurement.created_at < datetime.timedelta(seconds=5)
     ):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
